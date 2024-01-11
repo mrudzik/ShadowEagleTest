@@ -37,22 +37,11 @@ public class Player : MonoBehaviour
 	//	EnemyLogic();
         MovementCheck();
 
-        /*if (closestEnemie != null)
-        {
-            var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
-            if (distance <= AttackRange)
-            {
-                if (Time.time - lastAttackTime > AtackSpeed)
-                {
-                    //transform.LookAt(closestEnemie.transform);
-                    transform.transform.rotation = Quaternion.LookRotation(closestEnemie.transform.position - transform.position);
 
-                    lastAttackTime = Time.time;
-                    closestEnemie.Hp -= Damage;
-                    AnimatorController.SetTrigger("Attack");
-                }
-            }
-        }*/
+
+
+
+        /**/
     }
 
 
@@ -70,10 +59,20 @@ public class Player : MonoBehaviour
 			moveVector.z = _input.MovementVector.y;
 
 			_rb.MovePosition(transform.position + moveVector * movementSpeed * Time.fixedDeltaTime);
+
+			LookAtDirection(moveVector);
 		}
 
 	}
 
+	private void LookAtDirection(Vector3 lookDir)
+	{
+		var skewedInput = lookDir;
+		var relative = (transform.position + skewedInput) - transform.position;
+		var rot = Quaternion.LookRotation(relative, Vector3.up);
+
+		transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 300 * Time.deltaTime);
+	}
 
 
 
@@ -84,6 +83,7 @@ public class Player : MonoBehaviour
 		var enemies = SceneManager.Instance.Enemies;
 		Enemie closestEnemie = null;
 
+		// Find closest Enemie among all other enemies
 		for (int i = 0; i < enemies.Count; i++)
 		{
 			var enemie = enemies[i];
@@ -106,6 +106,25 @@ public class Player : MonoBehaviour
 				closestEnemie = enemie;
 			}
 
+		}
+
+
+		// Auto attack closest enemie if it close enough
+		if (closestEnemie != null)
+		{
+			var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
+			if (distance <= AttackRange)
+			{
+				if (Time.time - lastAttackTime > AtackSpeed)
+				{
+					//transform.LookAt(closestEnemie.transform);
+					transform.transform.rotation = Quaternion.LookRotation(closestEnemie.transform.position - transform.position);
+
+					lastAttackTime = Time.time;
+					closestEnemie.Hp -= Damage;
+					AnimatorController.SetTrigger("Attack");
+				}
+			}
 		}
 	}
 
