@@ -39,7 +39,7 @@ public class Enemie : MonoBehaviour
             return;
         }
 
-        var distance = Vector3.Distance(transform.position, SceneManager.Instance.Player.transform.position);
+		var distance = Vector3.Distance(transform.position, SceneManager.Instance.Player.transform.position);
      
         if (distance <= AttackRange)
         {
@@ -49,15 +49,18 @@ public class Enemie : MonoBehaviour
                 lastAttackTime = Time.time;
                 SceneManager.Instance.Player.Hp -= Damage;
                 AnimatorController.SetTrigger("Attack");
+			//	Debug.Log("attack Time = " + lastAttackTime);
             }
         }
         else
         {
-            Agent.SetDestination(SceneManager.Instance.Player.transform.position);
+			if (Time.time - lastAttackTime > AtackSpeed)
+			{
+				Agent.isStopped = false;
+				Agent.SetDestination(SceneManager.Instance.Player.transform.position);
+			}
         }
         AnimatorController.SetFloat("Speed", Agent.speed); 
-        Debug.Log(Agent.speed);
-
     }
 
 
