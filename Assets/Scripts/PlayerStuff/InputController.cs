@@ -18,7 +18,7 @@ public class InputController : MonoBehaviour
     void Update()
     {
 		MovementInput();
-		
+		AttackInput();
     }
 
 
@@ -38,6 +38,25 @@ public class InputController : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.A))	movementVector.x -= 1;
 		if (Input.GetKeyUp(KeyCode.A))		movementVector.x += 1;
 
+	}
+
+
+
+	public UI_CooldownDisplay fastAttackCooldown;
+	public UI_CooldownDisplay strongAttackCooldown;
+
+	void AttackInput()
+	{
+		if (Input.GetKeyDown(KeyCode.Mouse0)	// Fast attack
+			&& !fastAttackCooldown.StillCool) 
+		{
+			fastAttackCooldown.StartCooldown(1);
+		}
+		if (Input.GetKeyDown(KeyCode.Mouse1)    // Strong attack
+			&& !strongAttackCooldown.StillCool) 
+		{
+			strongAttackCooldown.StartCooldown(2);
+		}
 	}
 
 
