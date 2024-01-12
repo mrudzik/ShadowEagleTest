@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Hp: 10
   Damage: 1
-  AtackSpeed: 1
+  AtackSpeed: 0.5
   AttackRange: 2
   movementSpeed: 5
   AnimatorController: {fileID: 1267828194910623865}
@@ -66,6 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b4d6d5e3210cf14390c78f757d91e87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fastAttackCooldown: {fileID: 0}
+  strongAttackCooldown: {fileID: 0}
 --- !u!54 &7442056763710112502
 Rigidbody:
   m_ObjectHideFlags: 0

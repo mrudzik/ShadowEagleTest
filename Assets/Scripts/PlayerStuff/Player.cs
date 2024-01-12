@@ -1,20 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class Player : MonoBehaviour
 {
-	[Header("Health")]
+	[Header("Stats")]
     public float Hp;
-    public float Damage;
-    public float AtackSpeed;
-    public float AttackRange = 2;
-
 	public float movementSpeed = 5;
+	public float AttackRange = 2;
 
-    private float lastAttackTime = 0;
+	[Header("Fast Attack")]
+	public float FastDamage = 1;
+	public float FastAttackSpeed = 0.6f;
+	[Header("Strong Attack")]
+	public float StrongDamage = 2;
+	public float StrongAttackSpeed = 2f;
+
+	[Header("Animation")]
+	public Animator AnimatorController;
+	[Header("UI Stuff")]
+	public Image strongAttackBlocker;
+
+
+	private float lastAttackTime = 0;
     private bool isDead = false;
-    public Animator AnimatorController;
 
 	private InputController _input;
 	private Rigidbody _rb;
@@ -34,19 +45,14 @@ public class Player : MonoBehaviour
     {
 		if (DeathCheck()) return;
 
-	//	EnemyLogic();
+		EnemyLogic();
         MovementCheck();
 
-
-
-
-
-        /**/
     }
 
 
-	//(transform.forward * Mathf.Clamp(_input.MovementVector.magnitude, 0, 1))
 
+	#region Movement
 
 	// For optimization purposes, to not allocate it each tick and avoid memory fragmentation
 	private Vector3 moveVector = Vector3.zero; 
@@ -74,11 +80,61 @@ public class Player : MonoBehaviour
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 300 * Time.deltaTime);
 	}
 
-
-
+	#endregion
 
 
 	private void EnemyLogic()
+	{
+		var enemy = FindClosestEnemy();
+		if (enemy == null)
+		{
+			canDoStrongAttack = false;
+			strongAttackBlocker.enabled = true;
+			return;
+		}
+			
+
+
+		var distance = Vector3.Distance(transform.position, enemy.transform.position);
+		canDoStrongAttack = (distance <= AttackRange);
+
+		// UI button block
+		if (strongAttackBlocker.enabled == canDoStrongAttack)
+			strongAttackBlocker.enabled = !canDoStrongAttack;
+	}
+
+
+
+
+
+
+
+
+	public void FastAttack()
+	{
+		FastAttackEnemy(FindClosestEnemy());
+	}
+
+	private bool canDoStrongAttack = false;
+	public bool CanDoStrongAttack { get { return canDoStrongAttack; } }
+	public void StrongAttack()
+	{
+		if (!canDoStrongAttack)
+			return;
+		StrongAttackEnemy(FindClosestEnemy());
+	}
+
+
+
+
+
+
+
+
+
+
+
+	private Enemie FindClosestEnemy()
 	{
 		var enemies = SceneManager.Instance.Enemies;
 		Enemie closestEnemie = null;
@@ -105,28 +161,56 @@ public class Player : MonoBehaviour
 			{
 				closestEnemie = enemie;
 			}
-
 		}
 
+		return closestEnemie;
+	}
 
+
+	private void FastAttackEnemy(Enemie closestEnemie)
+	{
 		// Auto attack closest enemie if it close enough
+		if (closestEnemie != null)
+		{
+			var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
+
+
+			transform.LookAt(new Vector3(closestEnemie.transform.position.x, transform.position.y, closestEnemie.transform.position.z));
+			lastAttackTime = Time.time;
+			AnimatorController.SetTrigger("Attack");
+			if (distance <= AttackRange)
+			{
+				closestEnemie.Hp -= FastDamage;
+			}
+			
+		}
+	}
+
+	private void StrongAttackEnemy(Enemie closestEnemie)
+	{
 		if (closestEnemie != null)
 		{
 			var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
 			if (distance <= AttackRange)
 			{
-				if (Time.time - lastAttackTime > AtackSpeed)
-				{
-					//transform.LookAt(closestEnemie.transform);
-					transform.transform.rotation = Quaternion.LookRotation(closestEnemie.transform.position - transform.position);
-
-					lastAttackTime = Time.time;
-					closestEnemie.Hp -= Damage;
-					AnimatorController.SetTrigger("Attack");
-				}
+				transform.LookAt(new Vector3(closestEnemie.transform.position.x, transform.position.y, closestEnemie.transform.position.z));
+				lastAttackTime = Time.time;
+				closestEnemie.Hp -= StrongDamage;
+				AnimatorController.SetTrigger("Attack2");
 			}
 		}
 	}
+
+
+
+
+
+
+
+	
+	
+
+
 
 	#region Death Logic
 

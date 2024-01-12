@@ -8,11 +8,15 @@ public class InputController : MonoBehaviour
 	private Vector2 movementVector = Vector2.zero;
 	public Vector2 MovementVector { get { return movementVector.normalized; } }
 
+
+
+	private Player playerRef;
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
+		playerRef = SceneManager.Instance.Player;
+
+	}
 
     // Update is called once per frame
     void Update()
@@ -42,20 +46,27 @@ public class InputController : MonoBehaviour
 
 
 
+
+
+
+
 	public UI_CooldownDisplay fastAttackCooldown;
 	public UI_CooldownDisplay strongAttackCooldown;
 
 	void AttackInput()
 	{
-		if (Input.GetKeyDown(KeyCode.Mouse0)	// Fast attack
-			&& !fastAttackCooldown.StillCool) 
-		{
-			fastAttackCooldown.StartCooldown(1);
+		if (Input.GetKeyDown(KeyCode.Mouse0)	&& !fastAttackCooldown.StillCool)
+		{// Fast attack
+			fastAttackCooldown.StartCooldown(playerRef.FastAttackSpeed);
+			playerRef.FastAttack();
 		}
-		if (Input.GetKeyDown(KeyCode.Mouse1)    // Strong attack
-			&& !strongAttackCooldown.StillCool) 
-		{
-			strongAttackCooldown.StartCooldown(2);
+		if (Input.GetKeyDown(KeyCode.Mouse1)    && !strongAttackCooldown.StillCool)
+		{// Strong attack
+			if (playerRef.CanDoStrongAttack)
+			{
+				strongAttackCooldown.StartCooldown(playerRef.StrongAttackSpeed);
+				playerRef.StrongAttack();
+			}
 		}
 	}
 
