@@ -15,6 +15,10 @@ public class SceneManager : MonoBehaviour
     private int currWave = 0;
     [SerializeField] private LevelConfig Config;
 
+
+	
+	public Camera playerCam;
+
     private void Awake()
     {
         Instance = this;

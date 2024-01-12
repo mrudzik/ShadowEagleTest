@@ -7,7 +7,15 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
 	[Header("Stats")]
-    public float Hp;
+    public float maxHP;
+	private float currentHP;
+	public float CurrentHP
+	{
+		get { return currentHP; }
+		set { currentHP = value; healthDisplay.RefreshHP(currentHP, maxHP); }
+	}
+
+
 	public float movementSpeed = 5;
 	public float AttackRange = 2;
 
@@ -22,7 +30,7 @@ public class Player : MonoBehaviour
 	public Animator AnimatorController;
 	[Header("UI Stuff")]
 	public Image strongAttackBlocker;
-
+	public UI_HpDisplay healthDisplay;
 
 	private float lastAttackTime = 0;
     private bool isDead = false;
@@ -37,6 +45,8 @@ public class Player : MonoBehaviour
 		// Initialize stuff
 		_input = GetComponent<InputController>();
 		_rb = GetComponent<Rigidbody>();
+
+		CurrentHP = maxHP;
 	}
 
 
@@ -180,7 +190,7 @@ public class Player : MonoBehaviour
 			AnimatorController.SetTrigger("Attack");
 			if (distance <= AttackRange)
 			{
-				closestEnemie.Hp -= FastDamage;
+				closestEnemie.CurrentHP -= FastDamage;
 			}
 			
 		}
@@ -195,7 +205,7 @@ public class Player : MonoBehaviour
 			{
 				transform.LookAt(new Vector3(closestEnemie.transform.position.x, transform.position.y, closestEnemie.transform.position.z));
 				lastAttackTime = Time.time;
-				closestEnemie.Hp -= StrongDamage;
+				closestEnemie.CurrentHP -= StrongDamage;
 				AnimatorController.SetTrigger("Attack2");
 			}
 		}
@@ -219,7 +229,7 @@ public class Player : MonoBehaviour
 		if (isDead)
 			return true;
 
-		if (Hp <= 0)
+		if (currentHP <= 0)
 		{
 			Die();
 			return true;

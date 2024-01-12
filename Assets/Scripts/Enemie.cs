@@ -5,7 +5,15 @@ using UnityEngine.AI;
 
 public class Enemie : MonoBehaviour
 {
-    public float Hp;
+    public float maxHP;
+	private float currentHP;
+	public float CurrentHP 
+	{
+		get { return currentHP; }
+		set { currentHP = value; healthDisplay.RefreshHP(currentHP, maxHP); }
+	}
+
+
     public float Damage;
     public float AtackSpeed;
     public float AttackRange = 2;
@@ -17,11 +25,15 @@ public class Enemie : MonoBehaviour
     private float lastAttackTime = 0;
     private bool isDead = false;
 
+	[Header("UI Stuff")]
+	public UI_HpDisplay healthDisplay;
 
     private void Start()
     {
         SceneManager.Instance.AddEnemie(this);
         Agent.SetDestination(SceneManager.Instance.Player.transform.position);
+
+		CurrentHP = maxHP;
 
     }
 
@@ -32,7 +44,7 @@ public class Enemie : MonoBehaviour
             return;
         }
 
-        if (Hp <= 0)
+        if (CurrentHP <= 0)
         {
             Die();
             Agent.isStopped = true;
@@ -47,7 +59,7 @@ public class Enemie : MonoBehaviour
             if (Time.time - lastAttackTime > AtackSpeed)
             {
                 lastAttackTime = Time.time;
-                SceneManager.Instance.Player.Hp -= Damage;
+                SceneManager.Instance.Player.CurrentHP -= Damage;
                 AnimatorController.SetTrigger("Attack");
 			//	Debug.Log("attack Time = " + lastAttackTime);
             }
