@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fbee9837c46b60d40ab32243ba13bfa5, type: 3}
-  m_Name: Wave3
+  m_Name: Wave4
   m_EditorClassIdentifier: Assembly-CSharp::Wave
   Characters:
   - {fileID: 2768649712495322738, guid: 6f9abd6cc3f79754ab2987016caf2db3, type: 3}
   - {fileID: 2768649712495322738, guid: 6f9abd6cc3f79754ab2987016caf2db3, type: 3}
   - {fileID: 2768649712495322738, guid: 6f9abd6cc3f79754ab2987016caf2db3, type: 3}
+  - {fileID: 2768649712495322738, guid: cc44e0714812d8743ba43b1e3c370dfb, type: 3}

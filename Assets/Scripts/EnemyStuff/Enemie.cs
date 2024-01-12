@@ -77,7 +77,7 @@ public class Enemie : MonoBehaviour
 
 
 
-    private void Die()
+    protected virtual void Die()
     {
         SceneManager.Instance.RemoveEnemie(this);
         isDead = true;

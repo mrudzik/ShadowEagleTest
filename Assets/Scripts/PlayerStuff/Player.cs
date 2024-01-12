@@ -191,6 +191,8 @@ public class Player : MonoBehaviour
 			if (distance <= AttackRange)
 			{
 				closestEnemie.CurrentHP -= FastDamage;
+
+				RegenAfterDeath(closestEnemie);
 			}
 			
 		}
@@ -207,10 +209,20 @@ public class Player : MonoBehaviour
 				lastAttackTime = Time.time;
 				closestEnemie.CurrentHP -= StrongDamage;
 				AnimatorController.SetTrigger("Attack2");
+
+				RegenAfterDeath(closestEnemie);
 			}
 		}
 	}
 
+	private void RegenAfterDeath(Enemie enemy)
+	{
+		if (enemy.CurrentHP > 0)
+			return;
+
+		Debug.Log("Regen");
+		CurrentHP += 1;
+	}
 
 
 

@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore.Text;
+using UnityEngine.UI;
 
 public class SceneManager : MonoBehaviour
 {
@@ -14,9 +17,9 @@ public class SceneManager : MonoBehaviour
 
     private int currWave = 0;
     [SerializeField] private LevelConfig Config;
+	[SerializeField] private TextMeshProUGUI wavesText;
 
 
-	
 	public Camera playerCam;
 
     private void Awake()
@@ -59,11 +62,11 @@ public class SceneManager : MonoBehaviour
         var wave = Config.Waves[currWave];
         foreach (var character in wave.Characters)
         {
-            Vector3 pos = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
-            Instantiate(character, pos, Quaternion.identity);
+            SpawnEnemy(character, new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10)));
         }
         currWave++;
 
+		wavesText.text = $"Wave {currWave} of {Config.Waves.Length}";
     }
 
     public void Reset()
@@ -71,5 +74,10 @@ public class SceneManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
     
+
+	public void SpawnEnemy(GameObject character, Vector3 position)
+	{
+		Instantiate(character, position, Quaternion.identity);
+	}
 
 }
