@@ -182,18 +182,13 @@ public class Player : MonoBehaviour
 		// Auto attack closest enemie if it close enough
 		if (closestEnemie != null)
 		{
-			var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
+		//	var distance = Vector3.Distance(transform.position, closestEnemie.transform.position);
 
 
 			transform.LookAt(new Vector3(closestEnemie.transform.position.x, transform.position.y, closestEnemie.transform.position.z));
 			lastAttackTime = Time.time;
 			AnimatorController.SetTrigger("Attack");
-			if (distance <= AttackRange)
-			{
-				closestEnemie.CurrentHP -= FastDamage;
-
-				RegenAfterDeath(closestEnemie);
-			}
+			StartCoroutine(AttemptToDamage(closestEnemie, FastDamage));
 			
 		}
 	}
@@ -207,15 +202,31 @@ public class Player : MonoBehaviour
 			{
 				transform.LookAt(new Vector3(closestEnemie.transform.position.x, transform.position.y, closestEnemie.transform.position.z));
 				lastAttackTime = Time.time;
-				closestEnemie.CurrentHP -= StrongDamage;
+				
 				AnimatorController.SetTrigger("Attack2");
 
-				RegenAfterDeath(closestEnemie);
+				StartCoroutine(AttemptToDamage(closestEnemie, StrongDamage));
 			}
 		}
 	}
 
-	private void RegenAfterDeath(Enemie enemy)
+	private IEnumerator AttemptToDamage(Enemie enemy, float damage)
+	{
+		yield return new WaitForSeconds(0.4f);
+		// Need to wait till animation complete the move, to avoid annoying immediate damage before axe hit
+
+		var distance = Vector3.Distance(transform.position, enemy.transform.position);
+		if (distance > AttackRange)
+			yield break; // Target is out of reach
+		if (isDead)
+			yield break; // We are dead
+
+		enemy.CurrentHP -= damage;
+		RegenAfterKill(enemy);
+
+	}
+
+		private void RegenAfterKill(Enemie enemy)
 	{
 		if (enemy.CurrentHP > 0)
 			return;

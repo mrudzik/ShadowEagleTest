@@ -59,9 +59,9 @@ public class Enemie : MonoBehaviour
             if (Time.time - lastAttackTime > AtackSpeed)
             {
                 lastAttackTime = Time.time;
-                SceneManager.Instance.Player.CurrentHP -= Damage;
                 AnimatorController.SetTrigger("Attack");
-			//	Debug.Log("attack Time = " + lastAttackTime);
+
+				StartCoroutine(AttemptToAttack());
             }
         }
         else
@@ -74,6 +74,21 @@ public class Enemie : MonoBehaviour
         }
         AnimatorController.SetFloat("Speed", Agent.speed); 
     }
+
+	private IEnumerator AttemptToAttack()
+	{
+		yield return new WaitForSeconds(0.4f);
+		// Need to wait till animation complete the move, to avoid annoying immediate damage before axe hit
+		
+		var distance = Vector3.Distance(transform.position, SceneManager.Instance.Player.transform.position);
+		if (distance > AttackRange)
+			yield break; // Target is out of reach
+		if (isDead)
+			yield break; // We are dead
+
+		SceneManager.Instance.Player.CurrentHP -= Damage;
+
+	}
 
 
 
